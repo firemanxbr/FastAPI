@@ -30,12 +30,12 @@ CREATE TABLE IF NOT EXISTS transactions
     CONSTRAINT fk_transactions_users FOREIGN KEY (user_id) REFERENCES users(user_id))
     ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS statics
-	(statics_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS statistics
+	(statistics_id INT AUTO_INCREMENT PRIMARY KEY,
     profit DECIMAL(10,8) NOT NULL,
     transaction_id INT,
     date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_statics_transactions FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id))
+    CONSTRAINT fk_statistics_transactions FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id))
 	ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TRIGGER update_user_wallet_balance BEFORE INSERT ON transactions FOR EACH ROW
@@ -47,10 +47,10 @@ CREATE TRIGGER update_user_wallet_limit BEFORE INSERT ON wallets FOR EACH ROW
 CREATE TRIGGER update_user_wallet_income BEFORE INSERT ON transactions FOR EACH ROW
 	UPDATE wallets SET balance = (balance + (NEW.amount - (NEW.amount * 1.5)/100)) WHERE address = NEW.address_income;
 
-CREATE TRIGGER update_statics_profit AFTER INSERT ON transactions FOR EACH ROW
-	INSERT INTO statics(transaction_id, profit) VALUES(NEW.transaction_id, (NEW.amount * 1.5)/100);
+CREATE TRIGGER update_statistics_profit AFTER INSERT ON transactions FOR EACH ROW
+	INSERT INTO statistics(transaction_id, profit) VALUES(NEW.transaction_id, (NEW.amount * 1.5)/100);
 
-/* Registers to Test Proposal */
+/* Registers to Test Proposal
 INSERT INTO users(name, email) VALUES("User 1", "user_1@gmail.com");
 INSERT INTO users(name, email) VALUES("User 2", "user_2@gmail.com");
 
@@ -59,11 +59,12 @@ INSERT INTO wallets(address, user_id) VALUES("ab2m73q1mzojdbytvu0h4gw9hy59fppu3t
 
 INSERT INTO transactions(address_income, address_outcome, amount, user_id) VALUES("ab2m73q1mzojdbytvu0h4gw9hy59fppu3thg0u1ny2", "bc1q84y2quplejutvu0h4gw9hy59fppu3thg0u2xz3", "0.5", "1");
 INSERT INTO transactions(address_income, address_outcome, amount, user_id) VALUES("bc1q84y2quplejutvu0h4gw9hy59fppu3thg0u2xz3", "ab2m73q1mzojdbytvu0h4gw9hy59fppu3thg0u1ny2", "0.5", "2");
+*/
 
-/* Getting the Token
+/* How to getting the user token
 SELECT BIN_TO_UUID(token) FROM users;
 */
 
-/* Getting total of transactions and total of profit of the platform
-SELECT SUM(profit), (SELECT count(*) FROM statics) FROM statics
+/* How to getting the total of transactions and total of the platform profit
+SELECT SUM(profit), (SELECT count(*) FROM statistics) FROM statistics
 */

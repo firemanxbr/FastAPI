@@ -1,2 +1,3 @@
 fastapi==0.38.1
-mysql-connector==2.2.9
+mysql-connector-python==8.0.17
+pywallet==0.1.0
